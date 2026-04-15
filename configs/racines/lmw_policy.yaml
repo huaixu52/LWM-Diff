@@ -1,0 +1,72 @@
+# RACINES Latent World Model (LWM) Policy Configuration
+# For scripts/train_lmw_policy.py
+
+_base_: ../base.yaml
+
+experiment:
+  name: "racines_lmw_policy"
+  wandb_project: "LWM-Diff-LWM-Policy"
+  wandb_enabled: true
+  output_dir: "./outputs"
+
+data:
+  dataset: "racines"
+  root_dir: "/path/to/racines/"  # Set to your RACINES dataset root
+  train_domains:
+    - "Folder 1"
+    - "Folder 2"
+  test_domains:
+    - "Folder 3"
+  # IMPORTANT: use only five standard views, exclude Full
+  views:
+    - "A4C"
+    - "SC"
+    - "PL"
+    - "PSAV"
+    - "PSMV"
+  image_size: 256
+  obs_horizon: 8
+  action_horizon: 8
+  use_delta_pose: true
+  val_ratio: 0.2
+  val_split_mode: "contiguous"
+
+model:
+  input_channel: 1
+  encoder_out_dim: 32
+  action_dim: 6
+  fusion_dim: 256
+  transformer_layers: 3
+  transformer_heads: 4
+  transformer_dropout: 0.1
+  init_features: 64
+  use_disentangled_encoder: true
+  freeze_encoder: false
+  # if true, rotation loss wraps in degrees after denormalizing by pose_std
+  use_rotation_wrap: true
+  pretrained_path: ""
+
+training:
+  batch_size: 32
+  epochs: 50
+  lr: 1.0e-4
+  weight_decay: 1.0e-4
+  num_workers: 8
+  grad_clip: 10.0
+  seed: 42
+  lambda_latent: 1.0
+  lambda_trans: 1.0
+  lambda_rot: 0.5
+  # model selection criterion: position_error | loss_traj
+  save_best_by: "position_error"
+
+
+evaluation:
+  run_visualization: true
+  num_viz_traj_per_view: 3
+  viz_subsample_rate: 5
+  viz_max_length: 120
+  viz_smooth_window: 3
+  path_clip_margin: 1.2
+  decay_steepness: 8.0
+  decay_midpoint: 0.7

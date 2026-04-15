@@ -1,0 +1,68 @@
+# RACINES LWM-conditioned Diffusion Policy Configuration
+# For scripts/train_lmw_diffusion_policy.py
+#
+# 3-Loss architecture:
+#   L_total = L_noise + λ_ca·L_coarse_action + λ_wm·L_world_model
+# where L_world_model uses closed-loop or open-loop mode based on
+# closed_loop_rollout_steps.
+
+_base_: diffusion_policy.yaml
+
+experiment:
+  name: "racines_lmw_diffusion_policy"
+  wandb_project: "LWM-Diff-LWM-Diffusion-Policy"
+
+data:
+  # Use a short observation window so the latent world-model branch can infer dynamics.
+  obs_horizon: 8
+
+model:
+  freeze_encoder: true
+  latent_fusion_dim: 256
+  latent_transformer_layers: 3
+  latent_transformer_heads: 4
+  latent_transformer_dropout: 0.1
+  use_future_latent_condition: true
+  # Pretrained disentangled encoder checkpoint
+  pretrained_path: ""  # Set to your pretrained disentangled encoder checkpoint path
+  # Optional warm-start sources.
+  pretrained_diffusion_path: ""
+  pretrained_lmw_path: ""
+  # Set true if you want to take the shared image encoder from the LMW checkpoint.
+  # Usually keep false when diffusion warm-start is already used.
+  load_image_encoder_from_lmw: false
+  # Warm-start inference: init DDIM from coarse action prior instead of pure noise
+  use_warm_start: true
+  warm_start_noise_ratio: 0.5
+
+training:
+  batch_size: 24
+  epochs: 50
+  # λ_wm: weight for unified world-model loss (open-loop or closed-loop)
+  lambda_latent: 1.0
+  # λ_ca: direct L1 supervision for coarse action prior
+  lambda_coarse_action: 0.1
+  # Best checkpoint selection uses DualMetricEarlyStopping joint_score
+  # (position_error / 5e-4 + angle_error / 0.5)
+  save_best_by: "combined_error"
+  # Two-stage training: stage-1 trains world-model branch only (diffusion backbone frozen).
+  # Set to 0 to disable; recommended 5-10.
+  training_stage1_epochs: 10
+  # Closed-loop rollout: drive world model with policy's own actions during training.
+  # When > 0, L_world_model uses autoregressive rollout instead of single-shot MSE.
+  # NOTE: rollout_steps × action_horizon must ≤ future_images frames to have valid supervision.
+  closed_loop_rollout_steps: 1
+  # Scheduled sampling: ramp teacher forcing ratio from 1.0→0.0 over this many epochs.
+  # Helps stabilize early closed-loop training. Set 0 to disable (full autoregressive from start).
+  cl_scheduled_sampling_epochs: 10
+
+evaluation:
+  run_visualization: true
+  num_viz_traj_per_view: 3
+  viz_subsample_rate: 5
+  viz_max_length: 120
+  viz_smooth_window: 3
+  path_clip_margin: 1.2
+  decay_steepness: 8.0
+  decay_midpoint: 0.7
+

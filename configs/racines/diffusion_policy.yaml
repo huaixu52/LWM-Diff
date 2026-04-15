@@ -1,0 +1,77 @@
+# RACINES Diffusion Policy Configuration
+# For scripts/train_diffusion_policy.py
+
+_base_: ../base.yaml
+
+experiment:
+  name: "racines_diffusion_policy"
+  wandb_project: "LWM-Diff-Diffusion-Policy"
+  wandb_enabled: true
+  output_dir: "./outputs"
+
+data:
+  dataset: "racines"
+  root_dir: "/path/to/racines/"  # Set to your RACINES dataset root
+  train_domains:
+    - "Folder 1"
+    - "Folder 2"
+  test_domains:
+    - "Folder 3"
+  # IMPORTANT: use only five standard views, exclude Full
+  views:
+    - "A4C"
+    - "SC"
+    - "PL"
+    - "PSAV"
+    - "PSMV"
+  image_size: 256
+  obs_horizon: 1
+  action_horizon: 8
+  use_delta_pose: true
+  val_ratio: 0.2
+  val_split_mode: "contiguous"
+
+model:
+  input_channel: 1
+  pose_dim: 6
+  action_dim: 6
+  encoder_out_dim: 32
+  condition_dim: 256
+  denoiser_hidden_dim: 512
+  time_embed_dim: 128
+  diffusion_steps: 100
+  sampling_steps_eval: 20
+  beta_start: 1.0e-4
+  beta_end: 0.02
+  init_features: 64
+  # use pretrained disentangled encoder (Reward_encoder_new) or not
+  use_disentangled_encoder: true
+  freeze_encoder: true
+  # optional Stage2 spatial attention path: forward_spatial -> cross_attn
+  use_spatial_attention: false
+  freeze_spatial_attention: true
+  n_queries: 4
+  n_attn_heads: 4
+  n_attn_layers: 2
+  d_attn: 256
+  attn_dropout: 0.1
+  pretrained_path: ""  # Set to your pretrained disentangled encoder checkpoint path
+
+training:
+  batch_size: 32
+  epochs: 50
+  lr: 1.0e-4
+  weight_decay: 1.0e-4
+  num_workers: 8
+  grad_clip: 10.0
+  seed: 42
+  x0_l1_weight: 0.1
+  # model selection criterion: position_error | loss_noise
+  save_best_by: "position_error"
+
+evaluation:
+  run_visualization: true
+  num_viz_traj_per_view: 3
+  viz_subsample_rate: 5
+  viz_max_length: 120
+  viz_smooth_window: 3

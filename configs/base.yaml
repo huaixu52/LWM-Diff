@@ -1,0 +1,48 @@
+# Base configuration for LWM-Diff experiments
+# All dataset-specific configs inherit from this file via _base_
+
+experiment:
+  name: "lmw_diff_base"
+  seed: 42
+  wandb_project: "LMW-Diffusion"
+  wandb_enabled: true
+  output_dir: "./outputs"
+
+model:
+  z_dim: 512
+  input_channel: 1
+  init_features: 64
+  num_views: 6
+  num_domains: 3
+
+training:
+  batch_size: 32
+  epochs: 20
+  lr: 1.0e-4
+  lr_mine: 1.0e-4
+  lr_flow: 2.0e-5
+  num_workers: 8
+  grad_clip: 10.0
+  seed: 42
+  test_every: 100
+  save_every: 5
+
+evaluation:
+  run_probes: true
+  probe_epochs: 5
+  probe_lr: 1.0e-3
+  thresholds:
+    view_accuracy_min: 0.7
+    domain_invariance_min: 0.5
+    pose_mse_max: 0.1
+
+data:
+  dataset: ""
+  root_dir: ""
+  train_domains: []
+  test_domains: []
+  val_ratio: 0.2  # fraction of held-out domain used for validation
+  val_split_mode: "contiguous"  # contiguous | interleaved
+  image_size: 256
+  action_horizon: 1
+  use_delta_pose: true
