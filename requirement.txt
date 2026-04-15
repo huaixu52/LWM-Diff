@@ -1,0 +1,8 @@
+torch>=2.0
+numpy
+opencv-python
+scipy
+matplotlib
+pyyaml
+wandb
+timm
