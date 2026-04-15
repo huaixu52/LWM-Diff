@@ -4,14 +4,6 @@ Code for the paper: *Mitigating Covariate Shift in Imitation Learning for Autono
 
 TODO:The dataset preprocessing and experimental setup sections have been uploaded. The remaining components — model architecture, training scripts, and evaluation code — will be released in full upon paper acceptance.
 
-## Method
-
-LWM-Diffusion Policy is a hierarchical visuomotor policy that:
-1. Predicts a coarse action chunk from the observation history
-2. Rolls these actions through a latent world model to forecast future states
-3. Refines the output with a conditional diffusion decoder
-
-The closed-loop latent rollout exposes the policy to its own compounding errors during training, mitigating covariate shift without online environment interaction.
 
 ## Setup
 
