@@ -1,7 +1,5 @@
 # LWM-Diffusion Policy for Autonomous Robotic Ultrasound
 
-Code for the paper: *Mitigating Covariate Shift in Imitation Learning for Autonomous Robotic Ultrasound Using Latent World Model*
-
 TODO:The dataset preprocessing and experimental setup sections have been uploaded. The remaining components — model architecture, training scripts, and evaluation code — will be released in full upon paper acceptance.
 
 
