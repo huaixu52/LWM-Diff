@@ -9,12 +9,8 @@ TODO:The dataset preprocessing and experimental setup sections have been uploade
 pip install -r requirements.txt
 ```
 
-## Dataset
-
-This code uses the [RACINES](https://arxiv.org/abs/2511.00114) cardiac ultrasound dataset.We thank the authors for making their data publicly available. Set `root_dir` in the config YAML to your local path.
-
 ## Mutual information-based Encoder
-The encoder used is from [MI-GPSR](https://github.com/yuan-12138/MI-GPSR). We thank the authors for their excellent work. We retrained the encoder which can be found at https://drive.google.com/file/d/1XSNIVocFEbkFHfTCxShrdPAZGk7wTg71/view?usp=drive_link.
+The encoder used can be found at https://drive.google.com/file/d/1XSNIVocFEbkFHfTCxShrdPAZGk7wTg71/view?usp=drive_link.
 
 ## Training
 
